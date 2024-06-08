@@ -17,8 +17,13 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  ActiveToggleDropdownItem,
+  DeleteDropdownItem,
+} from "./_componets/ProductActions";
 
 const AdminProductsPage = () => {
   return (
@@ -33,8 +38,6 @@ const AdminProductsPage = () => {
     </>
   );
 };
-
-export default AdminProductsPage;
 
 async function ProductsTable() {
   const products = await db.product.findMany({
@@ -77,7 +80,7 @@ async function ProductsTable() {
               ) : (
                 <>
                   <span className="sr-only">Unavailable</span>
-                  <XCircle />
+                  <XCircle className="stroke-destructive" />
                 </>
               )}
             </TableCell>
@@ -96,6 +99,20 @@ async function ProductsTable() {
                       Download
                     </a>
                   </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href={`/admin/products/${product.id}/edit`}>
+                      Edit
+                    </Link>
+                  </DropdownMenuItem>
+                  <ActiveToggleDropdownItem
+                    id={product.id}
+                    isAvailableForPurchase={product.isAvailableForPurchase}
+                  />
+                  <DropdownMenuSeparator />
+                  <DeleteDropdownItem
+                    id={product.id}
+                    disabled={product._count.orders > 0}
+                  />
                 </DropdownMenuContent>
               </DropdownMenu>
             </TableCell>
@@ -105,3 +122,5 @@ async function ProductsTable() {
     </Table>
   );
 }
+
+export default AdminProductsPage;
