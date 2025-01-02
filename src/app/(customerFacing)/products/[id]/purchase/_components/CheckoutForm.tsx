@@ -49,7 +49,6 @@ export function CheckoutForm({ product, clientSecret }: CheckoutFormProps) {
             className="object-cover"
           />
         </div>
-
         <div>
           <div className="text-lg">
             {formatCurrency(product.priceInCents / 100)}
@@ -91,7 +90,7 @@ function Form({
 
     if (orderExists) {
       setErrorMessage(
-        "You have already purchased this project, trying downloading it from the my order page."
+        "You have already purchased this product. Try downloading it from the My Orders page"
       );
       setIsLoading(false);
       return;
@@ -108,11 +107,12 @@ function Form({
         if (error.type === "card_error" || error.type === "validation_error") {
           setErrorMessage(error.message);
         } else {
-          setErrorMessage("An unknown error occured");
+          setErrorMessage("An unknown error occurred");
         }
       })
       .finally(() => setIsLoading(false));
   }
+
   return (
     <form onSubmit={handleSubmit}>
       <Card>
