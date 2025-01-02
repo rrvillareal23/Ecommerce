@@ -1,29 +1,38 @@
-import { NextRequest, NextResponse } from 'next/server'
-import React from 'react'
-import { isValid } from 'zod'
-import { isValidPassword } from './lib/isValiedPassword'
+import { NextRequest, NextResponse } from "next/server";
+import React from "react";
+import { isValid } from "zod";
+import { isValidPassword } from "./lib/isValiedPassword";
 
 export async function middleware(req: NextRequest) {
-    if ((await isAuthenticated(req)) === false) {
-        return new NextResponse("Unauthorized", {
-            status: 401,
-            headers: { "WWW-Authenticate": "Basic"}
-        })
-    }
+  if ((await isAuthenticated(req)) === false) {
+    return new NextResponse("Unauthorized", {
+      status: 401,
+      headers: { "WWW-Authenticate": "Basic" },
+    });
+  }
 }
 
-async function isAuthenticated(req: NextRequest){
-    const authHeader = req.headers.get("authorization") || req.headers.get("Authorization")
+async function isAuthenticated(req: NextRequest) {
+  const authHeader =
+    req.headers.get("authorization") || req.headers.get("Authorization");
 
-    if(authHeader == null) return false
+  if (authHeader == null) return false;
 
-    const [username, password] = Buffer.from(authHeader.split(" ")[1], "base64").toString().split(":")
+  const [username, password] = Buffer.from(authHeader.split(" ")[1], "base64")
+    .toString()
+    .split(":");
 
-    isValidPassword(password,"dfsjfsk")
-    
-    return username === process.env.ADMIN_USERNAME && await isValidPassword(password, process.env.HASHED_ADMIN_PASSWORD as string)
+  isValidPassword(password, "dfsjfsk");
+
+  return (
+    username === process.env.ADMIN_USERNAME &&
+    (await isValidPassword(
+      password,
+      process.env.HASHED_ADMIN_PASSWORD as string
+    ))
+  );
 }
 
 export const config = {
-    matcher: "/admin/:path*"
-}
+  matcher: "/admin/:path*",
+};
