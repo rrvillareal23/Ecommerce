@@ -4,8 +4,7 @@ import Stripe from "stripe";
 import { Resend } from "resend";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
-
-const resend = new Resend(process.env.RESEND_SECRET_KEY as string);
+const resend = new Resend(process.env.RESEND_API_KEY as string);
 
 export async function POST(req: NextRequest) {
   const event = await stripe.webhooks.constructEvent(
@@ -29,7 +28,6 @@ export async function POST(req: NextRequest) {
       email,
       orders: { create: { productId, pricePaidInCents } },
     };
-
     const {
       orders: [order],
     } = await db.user.upsert({
@@ -46,11 +44,13 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    resend.emails.send({
+    await resend.emails.send({
       from: `Support <${process.env.SENDER_EMAIL}>`,
       to: email,
       subject: "Order Confirmation",
-      react: <h1>Hi</h1>,
+      react: <h1>Hello</h1>,
     });
   }
+
+  return new NextResponse();
 }
